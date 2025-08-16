@@ -57,6 +57,8 @@ public class JServerConfig {
      */
 
     public static final EnumOption<DamageScalingType> DAMAGE_SCALING_TYPE = new EnumOption<>("damageScalingType", BALANCE, DamageScalingType.class, DamageScalingType.TargetHealth);
+    public static final FloatOption DAMAGE_SCALING_MULTIPLIER = new FloatOption("damageScalingMultiplier", BALANCE, 0.5f);
+
     public static final FloatOption VS_STANDLESS_DAMAGE_MULTIPLIER = new FloatOption("vsStandlessDamageMultiplier", BALANCE, 1.5f);
     public static final FloatOption DAMAGE_SCALING_MINIMUM = new FloatOption("damageScalingMinimum", BALANCE, 0.4f);
     public static final FloatOption SCALING_PENALTY_PER_HIT = new FloatOption("scalingPenaltyPerHit", BALANCE, 0.02f);

@@ -397,7 +397,7 @@ public interface Attacks {
                     double multiplier = 1 + (playerDps - baseDps) / (netheriteDps - baseDps);
 
                     if (multiplier > 0.0) {
-                        damage *= multiplier;
+                        damage *= (multiplier * JServerConfig.DAMAGE_SCALING_MULTIPLIER.getValue());
                     }
 
                     // JCraft.LOGGER.info("AttackerDamage Multiplier = " + multiplier + "\nPlayer dps: "+playerDps +"\nAttack speed:" + playerSpeed + "\nAttack damage:" + playerDamage);                   
