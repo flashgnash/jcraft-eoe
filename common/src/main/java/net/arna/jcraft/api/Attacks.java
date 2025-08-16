@@ -366,7 +366,7 @@ public interface Attacks {
         switch (JServerConfig.DAMAGE_SCALING_TYPE.getValue()) {
             case TargetHealth: {
                 
-                JCraft.LOGGER.info("Using TargetHealth");
+                // JCraft.LOGGER.info("Using TargetHealth");
 
                 float healthRatio = ent.getMaxHealth() / 20.0f;
                 float damageAdjustment = healthRatio - 1.0f;
@@ -378,43 +378,35 @@ public interface Attacks {
             case AttackerDamage: {
                 if (attacker instanceof LivingEntity livingAttacker) {
 
-                    JCraft.LOGGER.info("Using AttackerDamage");
-                    
 
-                    // What damage multiplier should a netherite sword give
-                    // (if a user is holding a netherite sword, their stand damage will be
-                    // multiplied by this number. This will be used to scale all other weapons)
-                    double desiredNetheriteSwordMult = 2;
-
-                    double baseAttackSpeed = 4.0;
                     double baseDamage = 1.0;
+                    double baseAttackSpeed = 1.999999970197677;
                     double baseDps = baseDamage * baseAttackSpeed;
+                
 
-                    double netheriteSwordDamage = 7.0;
-                    double netheriteSwordSpeed = 1.6;
-                    double netheriteSwordDps = netheriteSwordDamage * netheriteSwordSpeed;
 
-                    double multiplier = (desiredNetheriteSwordMult / (netheriteSwordDps / baseDps)) ;
-                    
+                    double netheriteDamage = 8.0;
+                    double netheriteSpeed = 1.5999998807907119;
+                    double netheriteDps = netheriteDamage * netheriteSpeed;
 
                     double playerDamage = livingAttacker.getAttributeValue(Attributes.ATTACK_DAMAGE);
-                    double playerAttackSpeed = livingAttacker.getAttributeValue(Attributes.ATTACK_SPEED); 
-                    double playerDps = playerDamage * playerAttackSpeed;
+                    double playerSpeed = livingAttacker.getAttributeValue(Attributes.ATTACK_SPEED) * 2;
+                    double playerDps = playerDamage * playerSpeed;
 
+                    // Linear scale: 4 DPS → x1, 11.2 DPS → x2
+                    double multiplier = 1 + (playerDps - baseDps) / (netheriteDps - baseDps);
 
-                    double damageAdjustment = (playerDps / baseDps) * multiplier;
-
-                    if (damageAdjustment > 0.0f) {
-                        damage *= damageAdjustment;
+                    if (multiplier > 0.0) {
+                        damage *= multiplier;
                     }
-                    JCraft.LOGGER.info("Multiplier = "+damageAdjustment);
-                    
+
+                    // JCraft.LOGGER.info("AttackerDamage Multiplier = " + multiplier + "\nPlayer dps: "+playerDps +"\nAttack speed:" + playerSpeed + "\nAttack damage:" + playerDamage);                   
                 }
             };
         };
 
         
-        JCraft.LOGGER.info("Damaging entity: " + ent + " with damage: " + damage + " and scaling: " + scaling);
+        // JCraft.LOGGER.info("Damaging entity: " + ent + " with damage: " + damage + " and scaling: " + scaling);
 
 
 

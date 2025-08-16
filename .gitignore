@@ -54,3 +54,4 @@ run/
 
 .architectury-transformer/
 .direnv
+*.factorypath
