@@ -389,8 +389,22 @@ public interface Attacks {
                     double netheriteSpeed = 1.5999998807907119;
                     double netheriteDps = netheriteDamage * netheriteSpeed;
 
-                    double playerDamage = livingAttacker.getAttributeValue(Attributes.ATTACK_DAMAGE);
-                    double playerSpeed = livingAttacker.getAttributeValue(Attributes.ATTACK_SPEED) * 2;
+                    var attributes = livingAttacker.getAttributes();
+
+                    double playerSpeed = 1;
+
+
+                    // Found out the hard way testing this on my server that null checks are needed here
+                    // (causes crashes as some mobs don't have an attack speed set)
+                    if(attributes.hasAttribute(Attributes.ATTACK_SPEED)){
+                        playerSpeed = livingAttacker.getAttributeValue(Attributes.ATTACK_SPEED) * 2;
+                    }
+
+                    double playerDamage = 1;
+                    if(attributes.hasAttribute(Attributes.ATTACK_DAMAGE)) {
+                        playerDamage = livingAttacker.getAttributeValue(Attributes.ATTACK_DAMAGE);
+                    }
+
                     double playerDps = playerDamage * playerSpeed;
 
                     // Linear scale: 4 DPS → x1, 11.2 DPS → x2
