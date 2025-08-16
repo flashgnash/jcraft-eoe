@@ -12,6 +12,7 @@ import net.arna.jcraft.api.registry.JStatRegistry;
 import net.arna.jcraft.api.registry.JStatusRegistry;
 import net.arna.jcraft.api.spec.JSpec;
 import net.arna.jcraft.api.stand.StandEntity;
+import net.arna.jcraft.common.config.DamageScalingType;
 import net.arna.jcraft.common.config.JServerConfig;
 import net.arna.jcraft.common.entity.TrainingDummyEntity;
 import net.arna.jcraft.common.gravity.api.GravityChangerAPI;
@@ -358,19 +359,64 @@ public interface Attacks {
 
         float scaling = ((IJCraftComboTracker) ent).jcraft$getDamageScaling();
 
-        //JCraft.LOGGER.info("Damaging entity: " + ent + " with damage: " + damage + " and scaling: " + scaling);
         damage *= scaling;
 
         //tryApplyHitstop(attacker, ent, damage);
 
-        if (JServerConfig.HEALTH_TO_DAMAGE_SCALING.getValue()) {
-            float healthRatio = ent.getMaxHealth() / 20.0f;
-            float damageAdjustment = healthRatio - 1.0f;
+        switch (JServerConfig.DAMAGE_SCALING_TYPE.getValue()) {
+            case TargetHealth: {
+                
+                JCraft.LOGGER.info("Using TargetHealth");
 
-            if (damageAdjustment > 0.0f) {
-                damage *= (1.0f + damageAdjustment / 5.0f);
-            }
-        }
+                float healthRatio = ent.getMaxHealth() / 20.0f;
+                float damageAdjustment = healthRatio - 1.0f;
+
+                if (damageAdjustment > 0.0f) {
+                    damage *= (1.0f + damageAdjustment / 5.0f);
+                }
+            };
+            case AttackerDamage: {
+                if (attacker instanceof LivingEntity livingAttacker) {
+
+                    JCraft.LOGGER.info("Using AttackerDamage");
+                    
+
+                    // What damage multiplier should a netherite sword give
+                    // (if a user is holding a netherite sword, their stand damage will be
+                    // multiplied by this number. This will be used to scale all other weapons)
+                    double desiredNetheriteSwordMult = 2;
+
+                    double baseAttackSpeed = 4.0;
+                    double baseDamage = 1.0;
+                    double baseDps = baseDamage * baseAttackSpeed;
+
+                    double netheriteSwordDamage = 7.0;
+                    double netheriteSwordSpeed = 1.6;
+                    double netheriteSwordDps = netheriteSwordDamage * netheriteSwordSpeed;
+
+                    double multiplier = (desiredNetheriteSwordMult / (netheriteSwordDps / baseDps)) ;
+                    
+
+                    double playerDamage = livingAttacker.getAttributeValue(Attributes.ATTACK_DAMAGE);
+                    double playerAttackSpeed = livingAttacker.getAttributeValue(Attributes.ATTACK_SPEED); 
+                    double playerDps = playerDamage * playerAttackSpeed;
+
+
+                    double damageAdjustment = (playerDps / baseDps) * multiplier;
+
+                    if (damageAdjustment > 0.0f) {
+                        damage *= damageAdjustment;
+                    }
+                    JCraft.LOGGER.info("Multiplier = "+damageAdjustment);
+                    
+                }
+            };
+        };
+
+        
+        JCraft.LOGGER.info("Damaging entity: " + ent + " with damage: " + damage + " and scaling: " + scaling);
+
+
 
         float armor = ent.getArmorValue();
         float toughness = (float) ent.getAttributeValue(Attributes.ARMOR_TOUGHNESS);

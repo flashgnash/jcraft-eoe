@@ -690,6 +690,7 @@
   "jcraft.serverconfig.option.enableMoveCooldowns": "Move Cooldowns",
   "jcraft.serverconfig.option.exclusiveStands": "Exclusive Stands",
   "jcraft.serverconfig.option.healthToDamageScaling": "Health to Damage Scaling",
+  "jcraft.serverconfig.option.damageScalingType": "Damage scaling type",
   "jcraft.serverconfig.option.ignoreArmor": "Stands Ignore Armor",
   "jcraft.serverconfig.option.invisCreamVoid": "Cream's Void Invisible",
   "jcraft.serverconfig.option.kcTimeErasureDuration": "King Crimson Time Erasure Duration",
