@@ -377,8 +377,11 @@ public interface Attacks {
             };
             case AttackerDamage: {
                 if (attacker instanceof LivingEntity livingAttacker) {
-
-
+                    // Dividing by 2 for fine tuning
+                    // This way, a config value of 1.0 will result in stand M1s doing the same damage as normal melee attacks
+                    // In a future change I will modify TargetHealth damage scaling to also use this value somehow
+                    var configMultiplier = JServerConfig.DAMAGE_SCALING_MULTIPLIER.getValue() / 2;
+                    
                     double baseDamage = 1.0;
                     double baseAttackSpeed = 1.999999970197677;
                     double baseDps = baseDamage * baseAttackSpeed;
@@ -411,7 +414,7 @@ public interface Attacks {
                     double multiplier = 1 + (playerDps - baseDps) / (netheriteDps - baseDps);
 
                     if (multiplier > 0.0) {
-                        damage *= (multiplier * JServerConfig.DAMAGE_SCALING_MULTIPLIER.getValue());
+                        damage *= (multiplier * configMultiplier);
                     }
 
                     // JCraft.LOGGER.info("AttackerDamage Multiplier = " + multiplier + "\nPlayer dps: "+playerDps +"\nAttack speed:" + playerSpeed + "\nAttack damage:" + playerDamage);                   

@@ -20,6 +20,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 
 public class JServerConfig {
     public static final Codec<IntOption> INT_OPTION_CODEC = Codec.STRING.comapFlatMap(
@@ -57,7 +60,7 @@ public class JServerConfig {
      */
 
     public static final EnumOption<DamageScalingType> DAMAGE_SCALING_TYPE = new EnumOption<>("damageScalingType", BALANCE, DamageScalingType.class, DamageScalingType.TargetHealth);
-    public static final FloatOption DAMAGE_SCALING_MULTIPLIER = new FloatOption("damageScalingMultiplier", BALANCE, 0.5f);
+    public static final FloatOption DAMAGE_SCALING_MULTIPLIER = new FloatOption("damageScalingMultiplier", BALANCE, 1.0f);
 
     public static final FloatOption VS_STANDLESS_DAMAGE_MULTIPLIER = new FloatOption("vsStandlessDamageMultiplier", BALANCE, 1.5f);
     public static final FloatOption DAMAGE_SCALING_MINIMUM = new FloatOption("damageScalingMinimum", BALANCE, 0.4f);
@@ -100,6 +103,21 @@ public class JServerConfig {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     public static final Path GLOBAL_DEFAULT = Path.of("./config/jconfig.json");
 
+
+
+    private static final Map<String, Consumer<JsonElement>> READERS =
+        Map.of(
+            "oldKey", val -> {
+                ConfigOption newOpt = ConfigOption.getImmutableOptions().get("newKey");
+                if (newOpt != null) newOpt.read(val);
+            },
+            "anotherKey", val -> {
+                // custom logic here
+            }
+        );
+   
+
+
     // Empty method to force class initialization.
     // Not doing this breaks the /jconfig command (cuz this class won't be initialized on clients).
     public static void init() {
@@ -123,6 +141,9 @@ public class JServerConfig {
                 return;
             }
         }
+        
+
+        
 
         try (BufferedReader reader = Files.newBufferedReader(path)) {
             JsonObject data = gson.fromJson(reader, JsonObject.class);
